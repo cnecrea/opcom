@@ -1,0 +1,91 @@
+{
+  "title": "OPCOM România",
+
+  "config": {
+    "flow_title": "OPCOM România",
+
+    "step": {
+      "user": {
+        "title": "Configurare OPCOM România",
+        "description": "Configurează importul prețurilor PZU de pe OPCOM România.",
+        "data": {
+          "lang": "Limbă (ro/en)",
+          "resolutions": "Rezoluții în minute (15/30/60)",
+          "days_ahead": "Zile în avans (1 = doar azi, 2 = azi + mâine)",
+          "scan_interval_minutes": "Interval de actualizare în minute (5-180)",
+          "window_minutes": "Durată fereastră de planificare (minute)",
+          "top_n_windows": "Număr ferestre pe zi (1-24)",
+          "top_n_per_resolution": "Ferestre per rezoluție (opțional, ex: 15:4, 30:6, 60:2). Gol = valoare globală.",
+          "price_threshold_low": "Alertă când prețul scade sub această valoare (RON/MWh). Gol = dezactivat.",
+          "price_threshold_high": "Alertă când prețul crește peste această valoare (RON/MWh). Gol = dezactivat."
+        }
+      }
+    },
+
+    "error": {
+      "invalid_lang": "Limbă invalidă. Folosește 'ro' sau 'en'.",
+      "invalid_resolutions": "Rezoluții invalide. Valori permise: 15, 30, 60.",
+      "invalid_number": "Valoare numerică invalidă.",
+      "out_of_range": "Valoarea este în afara intervalului permis.",
+      "threshold_low_gte_high": "Pragul inferior trebuie să fie mai mic decât pragul superior."
+    },
+
+    "abort": {
+      "already_configured": "OPCOM România este deja configurat."
+    }
+  },
+
+  "options": {
+    "flow_title": "Setări OPCOM România",
+
+    "step": {
+      "init": {
+        "title": "Setări OPCOM România",
+        "description": "Selectează categoria de gestionat",
+        "menu_options": {
+          "settings": "Setări integrare",
+          "licenta": "Licență"
+        }
+      },
+
+      "settings": {
+        "title": "Setări integrare",
+        "description": "Modifică setările integrării OPCOM România. Câmpurile opționale pot fi golite pentru a le dezactiva.",
+        "data": {
+          "lang": "Limbă (ro/en)",
+          "resolutions": "Rezoluții în minute (15/30/60)",
+          "days_ahead": "Zile în avans (1 = doar azi, 2 = azi + mâine)",
+          "scan_interval_minutes": "Interval de actualizare în minute (5-180)",
+          "window_minutes": "Durată fereastră de planificare (minute)",
+          "top_n_windows": "Număr ferestre pe zi (1-24)",
+          "top_n_per_resolution": "Ferestre per rezoluție (opțional, ex: 15:4, 30:6, 60:2). Golește pentru valoarea globală.",
+          "price_threshold_low": "Alertă când prețul scade sub această valoare (RON/MWh). Golește pentru dezactivare.",
+          "price_threshold_high": "Alertă când prețul crește peste această valoare (RON/MWh). Golește pentru dezactivare."
+        }
+      },
+
+      "licenta": {
+        "title": "Licență OPCOM România",
+        "description": "{license_status}\n\nIntrodu cheia de licență pentru a activa sau reînnoi integrarea.",
+        "data": {
+          "license_key": "Cheie de licență"
+        }
+      }
+    },
+
+    "error": {
+      "invalid_lang": "Limbă invalidă. Folosește 'ro' sau 'en'.",
+      "invalid_resolutions": "Rezoluții invalide. Valori permise: 15, 30, 60.",
+      "invalid_number": "Valoare numerică invalidă.",
+      "out_of_range": "Valoarea este în afara intervalului permis.",
+      "threshold_low_gte_high": "Pragul inferior trebuie să fie mai mic decât pragul superior.",
+      "license_key_empty": "Introdu o cheie de licență.",
+      "license_key_invalid": "Cheie de licență invalidă. Verifică formatul și încearcă din nou.",
+      "license_already_used": "Această cheie de licență a fost deja folosită pe altă instalare.",
+      "license_key_expired": "Această cheie de licență a expirat.",
+      "license_fingerprint_mismatch": "Această cheie de licență este asociată altei instalări.",
+      "license_network_error": "Nu se poate conecta la serverul de licențe. Verifică conexiunea la internet.",
+      "license_server_error": "Eroare server licențe. Încearcă din nou mai târziu."
+    }
+  }
+}

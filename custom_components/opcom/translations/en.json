@@ -1,0 +1,91 @@
+{
+  "title": "OPCOM Romania",
+
+  "config": {
+    "flow_title": "OPCOM Romania",
+
+    "step": {
+      "user": {
+        "title": "Configure OPCOM Romania",
+        "description": "Set up OPCOM Romania PZU electricity price import.",
+        "data": {
+          "lang": "Language (ro/en)",
+          "resolutions": "Resolutions in minutes (15/30/60)",
+          "days_ahead": "Days to fetch ahead (1 = today, 2 = today + tomorrow)",
+          "scan_interval_minutes": "Update interval in minutes (5-180)",
+          "window_minutes": "Planning window duration (minutes)",
+          "top_n_windows": "Number of windows per day (1-24)",
+          "top_n_per_resolution": "Windows per resolution (optional, e.g. 15:4, 30:6, 60:2). Leave empty for global value.",
+          "price_threshold_low": "Alert when price drops below this value (RON/MWh). Empty = disabled.",
+          "price_threshold_high": "Alert when price rises above this value (RON/MWh). Empty = disabled."
+        }
+      }
+    },
+
+    "error": {
+      "invalid_lang": "Invalid language. Use ro or en.",
+      "invalid_resolutions": "Invalid resolutions. Allowed: 15, 30, 60.",
+      "invalid_number": "Invalid numeric value.",
+      "out_of_range": "Value is out of the allowed range.",
+      "threshold_low_gte_high": "The low threshold must be less than the high threshold."
+    },
+
+    "abort": {
+      "already_configured": "OPCOM Romania is already configured."
+    }
+  },
+
+  "options": {
+    "flow_title": "OPCOM Romania Settings",
+
+    "step": {
+      "init": {
+        "title": "OPCOM Romania Settings",
+        "description": "Select the category to manage",
+        "menu_options": {
+          "settings": "Integration Settings",
+          "licenta": "License"
+        }
+      },
+
+      "settings": {
+        "title": "Integration Settings",
+        "description": "Update OPCOM Romania integration settings. Optional fields can be cleared to disable them.",
+        "data": {
+          "lang": "Language (ro/en)",
+          "resolutions": "Resolutions in minutes (15/30/60)",
+          "days_ahead": "Days to fetch ahead (1 = today, 2 = today + tomorrow)",
+          "scan_interval_minutes": "Update interval in minutes (5-180)",
+          "window_minutes": "Planning window duration (minutes)",
+          "top_n_windows": "Number of windows per day (1-24)",
+          "top_n_per_resolution": "Windows per resolution (optional, e.g. 15:4, 30:6, 60:2). Clear to use global value.",
+          "price_threshold_low": "Alert when price drops below this value (RON/MWh). Clear to disable.",
+          "price_threshold_high": "Alert when price rises above this value (RON/MWh). Clear to disable."
+        }
+      },
+
+      "licenta": {
+        "title": "OPCOM Romania License",
+        "description": "{license_status}\n\nEnter your license key to activate or renew the integration.",
+        "data": {
+          "license_key": "License Key"
+        }
+      }
+    },
+
+    "error": {
+      "invalid_lang": "Invalid language. Use ro or en.",
+      "invalid_resolutions": "Invalid resolutions. Allowed: 15, 30, 60.",
+      "invalid_number": "Invalid numeric value.",
+      "out_of_range": "Value is out of the allowed range.",
+      "threshold_low_gte_high": "The low threshold must be less than the high threshold.",
+      "license_key_empty": "Please enter a license key.",
+      "license_key_invalid": "Invalid license key. Check the format and try again.",
+      "license_already_used": "This license key has already been used on another installation.",
+      "license_key_expired": "This license key has expired.",
+      "license_fingerprint_mismatch": "This license key is bound to a different installation.",
+      "license_network_error": "Cannot connect to the license server. Check your internet connection.",
+      "license_server_error": "License server error. Please try again later."
+    }
+  }
+}
