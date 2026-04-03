@@ -111,7 +111,7 @@ Integrarea folosește un sistem de licențiere server-side (v3.5) cu semnături 
 
 La prima instalare ai o **perioadă de evaluare (trial)** cu funcționalitate completă. Senzorul de licență arată câte zile mai ai de trial. După expirarea trial-ului, ai nevoie de o licență activă.
 
-Licențe disponibile la: [hubinteligent.org/licenta/opcom](https://hubinteligent.org/licenta/opcom)
+Licențe disponibile la: [hubinteligent.org/donate?ref=opcom](https://hubinteligent.org/donate?ref=opcom)
 
 După achiziție, introdu cheia de licență din OptionsFlow:
 
