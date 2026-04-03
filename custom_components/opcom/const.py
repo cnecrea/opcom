@@ -7,7 +7,7 @@ DOMAIN = "opcom"
 
 CONF_LICENSE_KEY: Final = "license_key"
 LICENSE_DATA_KEY: Final = "opcom_license_manager"
-LICENSE_PURCHASE_URL = "https://hubinteligent.org/licenta/opcom"
+LICENSE_PURCHASE_URL = "https://hubinteligent.org/donate?ref=opcom"
 
 CONF_LANG = "lang"
 CONF_RESOLUTIONS = "resolutions"
