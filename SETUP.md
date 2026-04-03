@@ -9,7 +9,7 @@ Acest ghid acoperă fiecare pas al instalării și configurării integrării OPC
 Înainte de a începe, asigură-te că ai:
 
 - **Home Assistant** versiunea 2024.1.0 sau mai nouă
-- **Licență** validă — de la [hubinteligent.org/licenta/opcom](https://hubinteligent.org/licenta/opcom) (trial disponibil la prima instalare)
+- **Licență** validă — de la [hubinteligent.org/donate?ref=opcom](https://hubinteligent.org/donate?ref=opcom) (trial disponibil la prima instalare)
 - **Acces la internet** din instanța HA (integrarea descarcă date de pe opcom.ro și validează licența)
 - **HACS** instalat (opțional, dar recomandat) — [instrucțiuni HACS](https://hacs.xyz/docs/setup/download)
 
@@ -187,7 +187,7 @@ Vei vedea un formular cu 9 câmpuri. Le poți lăsa pe toate pe valorile implici
 
 Integrarea necesită o **licență validă** pentru a funcționa complet. La prima instalare ai o perioadă de evaluare (trial). După expirarea trial-ului, trebuie să activezi o licență.
 
-Licențe disponibile la: [hubinteligent.org/licenta/opcom](https://hubinteligent.org/licenta/opcom)
+Licențe disponibile la: [hubinteligent.org/donate?ref=opcom](https://hubinteligent.org/donate?ref=opcom)
 
 Pentru a introduce licența:
 
