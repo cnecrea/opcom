@@ -335,7 +335,7 @@ class OpcomBinaryIndividual(_OpcomBinaryBase):
 
         if top:
             attrs["Top intervale din toata ziua"] = ""
-            attrs.update(format_interval_dict(top, self.coordinator.hass))
+            attrs.update(format_interval_dict(top, self.coordinator.hass, expensive=self.expensive))
 
         attrs.update(_diagnostic_attrs(self.coordinator))
         return attrs
@@ -626,7 +626,7 @@ class OpcomBinaryRolling(_OpcomBinaryBase):
 
         if top:
             attrs["Top intervale din cele ramase"] = ""
-            attrs.update(format_interval_dict(top, self.coordinator.hass))
+            attrs.update(format_interval_dict(top, self.coordinator.hass, expensive=self.expensive))
 
         attrs.update(_diagnostic_attrs(self.coordinator))
         return attrs

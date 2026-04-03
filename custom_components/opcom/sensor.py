@@ -411,7 +411,7 @@ class OpcomRemainingIntervalsSensor(_OpcomBaseSensor):
 
         if remaining:
             attrs["Lista intervale ramase"] = ""
-            attrs.update(format_interval_dict(remaining, self.coordinator.hass))
+            attrs.update(format_interval_dict(remaining, self.coordinator.hass, expensive=self.expensive))
 
         attrs.update(self._diagnostic_attrs())
         return attrs

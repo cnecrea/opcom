@@ -610,22 +610,43 @@ def format_interval_str(r: dict[str, Any], hass: HomeAssistant = None) -> str:
 
 
 def format_interval_dict(
-    intervals: list[dict[str, Any]], hass: HomeAssistant = None
+    intervals: list[dict[str, Any]],
+    hass: HomeAssistant = None,
+    expensive: bool = False,
 ) -> dict[str, str]:
     """
     Formatează o listă de intervale ca dict cu chei numerotate.
     Sortare CRONOLOGICĂ (după interval) — mai ușor de scanat vizual.
 
+    ``expensive`` controlează direcția rangului în top:
+      - expensive=True  → rang 1 = cel mai scump  (desc)
+      - expensive=False → rang 1 = cel mai ieftin (asc)
+
     Exemplu:
-      {"Pozitia 1": "int. 12 · 02:45 → 03:00 · 623.02 RON/MWh", ...}
+      {"Pozitia 3": "int. 12 · 02:45 → 03:00 · 623.02 RON/MWh", ...}
+      (unde 3 = rangul acelui interval în topul de preț, NU indexul din listă)
     """
+    # --- Calculăm rangul fiecărui interval în topul de preț ---
+    by_price = sorted(
+        intervals,
+        key=lambda r: safe_float(r.get("pret_lei_mwh")) or 0.0,
+        reverse=expensive,
+    )
+    rank_map: dict[int, int] = {}
+    for rank, r in enumerate(by_price, 1):
+        idx = int(r.get("interval", 0))
+        rank_map[idx] = rank
+
+    # --- Afișăm cronologic, dar cu rangul din top ---
     sorted_intervals = sorted(
         intervals,
         key=lambda r: int(r.get("interval", 0)),
     )
     result: dict[str, str] = {}
-    for i, r in enumerate(sorted_intervals, 1):
-        result[f"Pozitia {i}"] = format_interval_str(r, hass)
+    for r in sorted_intervals:
+        idx = int(r.get("interval", 0))
+        rang = rank_map.get(idx, 0)
+        result[f"Pozitia {rang}"] = format_interval_str(r, hass)
     return result
 
 
