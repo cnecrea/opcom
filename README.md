@@ -216,11 +216,11 @@ Nr. ferestre: 6
 Interval curent: 45
 Intervale ramase: 8
 Lista intervale ramase:
-Pozitia 1: int. 73 · 18:00 → 18:15 · 580.20 RON/MWh
-Pozitia 2: int. 74 · 18:15 → 18:30 · 575.10 RON/MWh
+Pozitia 5: int. 73 · 18:00 → 18:15 · 580.20 RON/MWh
+Pozitia 6: int. 74 · 18:15 → 18:30 · 575.10 RON/MWh
 ```
 
-Intervalele rămase sunt **sortate cronologic**.
+Intervalele rămase sunt **sortate cronologic**. `Pozitia X` indică **rangul intervalului în topul de preț** (Pozitia 1 = cel mai bun preț din top), nu ordinea din listă.
 
 ### Senzor percentilă (1 per rezoluție)
 
@@ -318,11 +318,11 @@ Intervale selectate: 16
 Interval curent: 45
 Interval activ: int. 45 · 12:00 → 12:15 · 580.20 RON/MWh
 Top intervale din toata ziua:
-Pozitia 1: int. 73 · 18:00 → 18:15 · 719.00 RON/MWh
+Pozitia 3: int. 73 · 18:00 → 18:15 · 719.00 RON/MWh
 Pozitia 2: int. 74 · 18:15 → 18:30 · 723.00 RON/MWh
 ```
 
-Intervalele sunt sortate cronologic.
+Intervalele sunt **sortate cronologic**. `Pozitia X` indică **rangul intervalului în topul de preț** (Pozitia 1 = cel mai bun preț din top), nu ordinea din listă.
 
 ### Senzori binari — prag de preț (2 per rezoluție)
 
