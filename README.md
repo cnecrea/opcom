@@ -19,7 +19,7 @@ Integrarea folosește un **sistem de licențiere server-side** (v3.5) cu semnăt
 
 La prima instalare ai o **perioadă de evaluare (trial)** cu funcționalitate completă. După expirarea trial-ului, ai nevoie de o licență activă.
 
-Licențe disponibile la: **[hubinteligent.org/licenta/opcom](https://hubinteligent.org/licenta/opcom)**
+Licențe disponibile la: [hubinteligent.org/donate?ref=opcom](https://hubinteligent.org/donate?ref=opcom)
 
 Cheia de licență se introduce din **OptionsFlow**:
 
@@ -529,7 +529,7 @@ custom_components/opcom/
 ## Cerințe
 
 - **Home Assistant** 2024.1.0 sau mai nou
-- **Licență** validă — de la [hubinteligent.org/licenta/opcom](https://hubinteligent.org/licenta/opcom) (trial disponibil)
+- **Licență** validă — de la [hubinteligent.org/donate?ref=opcom](https://hubinteligent.org/donate?ref=opcom) (trial disponibil)
 - **HACS** (opțional, pentru instalare ușoară)
 - **Acces la internet** — integrarea descarcă date de pe opcom.ro și validează licența
 
