@@ -1,7 +1,7 @@
 {
   "repo": "",
   "prima_colectare": "",
-  "ultima_actualizare": "2026-04-07T07:20:51Z",
+  "ultima_actualizare": "2026-04-08T07:23:49Z",
   "zilnic": {
     "2026-03-01": {
       "clones_total": 5,
@@ -817,7 +817,11 @@
           "vizite": 1,
           "vizitatori_unici": 1
         }
-      ]
+      ],
+      "clones_total": 47,
+      "clones_unice": 26,
+      "views_total": 18,
+      "views_unice": 3
     },
     "2026-04-07": {
       "stars": 4,
@@ -855,12 +859,59 @@
           "vizite": 1,
           "vizitatori_unici": 1
         }
+      ],
+      "clones_total": 17,
+      "clones_unice": 9,
+      "views_total": 4,
+      "views_unice": 4
+    },
+    "2026-04-08": {
+      "stars": 4,
+      "forks": 1,
+      "watchers": 0,
+      "open_issues": 0,
+      "referrers": [
+        {
+          "sursa": "github.com",
+          "vizite": 123,
+          "vizitatori_unici": 58
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 17,
+          "vizitatori_unici": 10
+        },
+        {
+          "sursa": "m.facebook.com",
+          "vizite": 9,
+          "vizitatori_unici": 9
+        },
+        {
+          "sursa": "lm.facebook.com",
+          "vizite": 9,
+          "vizitatori_unici": 8
+        },
+        {
+          "sursa": "statics.teams.cdn.office.net",
+          "vizite": 9,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "Google",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "hubinteligent.org",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
       ]
     }
   },
   "releases": {
     "2.2.0": 1,
     "2.1.0": 1,
-    "2.0.0": 2
+    "2.0.0": 3
   }
 }
