@@ -16,6 +16,7 @@ from homeassistant.helpers.event import async_track_point_in_time
 from .api import fetch_and_parse_day
 from .const import (
     DOMAIN,
+    LICENSE_DATA_KEY,
     CONF_LANG,
     CONF_RESOLUTIONS,
     CONF_DAYS_AHEAD,
@@ -245,6 +246,12 @@ class OpcomCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         și se bazează pe fallback polling (update_interval) pentru
         următoarea încercare.
         """
+        # Verificare licență — nu fetchuim date dacă licența/trial nu e validă
+        license_mgr = self.hass.data.get(DOMAIN, {}).get(LICENSE_DATA_KEY)
+        if license_mgr and not license_mgr.is_valid:
+            _LOGGER.debug("[OPCOM] Licență invalidă — se omit apelurile API")
+            return self.data or {}
+
         t0 = time.perf_counter()
         last_error: Exception | None = None
 
