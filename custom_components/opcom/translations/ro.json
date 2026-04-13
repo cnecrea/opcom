@@ -1,9 +1,7 @@
 {
   "title": "OPCOM România",
-
   "config": {
     "flow_title": "OPCOM România",
-
     "step": {
       "user": {
         "title": "Configurare OPCOM România",
@@ -21,7 +19,6 @@
         }
       }
     },
-
     "error": {
       "invalid_lang": "Limbă invalidă. Folosește 'ro' sau 'en'.",
       "invalid_resolutions": "Rezoluții invalide. Valori permise: 15, 30, 60.",
@@ -29,15 +26,12 @@
       "out_of_range": "Valoarea este în afara intervalului permis.",
       "threshold_low_gte_high": "Pragul inferior trebuie să fie mai mic decât pragul superior."
     },
-
     "abort": {
       "already_configured": "OPCOM România este deja configurat."
     }
   },
-
   "options": {
     "flow_title": "Setări OPCOM România",
-
     "step": {
       "init": {
         "title": "Setări OPCOM România",
@@ -47,7 +41,6 @@
           "licenta": "Licență"
         }
       },
-
       "settings": {
         "title": "Setări integrare",
         "description": "Modifică setările integrării OPCOM România. Câmpurile opționale pot fi golite pentru a le dezactiva.",
@@ -63,7 +56,6 @@
           "price_threshold_high": "Alertă când prețul crește peste această valoare (RON/MWh). Golește pentru dezactivare."
         }
       },
-
       "licenta": {
         "title": "Licență OPCOM România",
         "description": "{license_status}\n\nIntrodu cheia de licență pentru a activa sau reînnoi integrarea.",
@@ -72,7 +64,6 @@
         }
       }
     },
-
     "error": {
       "invalid_lang": "Limbă invalidă. Folosește 'ro' sau 'en'.",
       "invalid_resolutions": "Rezoluții invalide. Valori permise: 15, 30, 60.",
@@ -86,6 +77,16 @@
       "license_fingerprint_mismatch": "Această cheie de licență este asociată altei instalări.",
       "license_network_error": "Nu se poate conecta la serverul de licențe. Verifică conexiunea la internet.",
       "license_server_error": "Eroare server licențe. Încearcă din nou mai târziu."
+    }
+  },
+  "issues": {
+    "trial_expired": {
+      "title": "Licența de probă a expirat — OPCOM România",
+      "description": "Perioada de evaluare gratuită s-a încheiat.\n\nSenzorii sunt dezactivați până la obținerea unei licențe.\n\n[Obține o licență acum]({learn_more_url})"
+    },
+    "license_expired": {
+      "title": "Licența a expirat — OPCOM România",
+      "description": "Licența pentru această integrare a expirat.\n\nSenzorii sunt dezactivați până la reînnoirea licenței.\n\n[Reînnoiește licența]({learn_more_url})"
     }
   }
 }

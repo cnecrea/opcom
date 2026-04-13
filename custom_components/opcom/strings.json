@@ -1,9 +1,7 @@
 {
   "title": "OPCOM Romania",
-
   "config": {
     "flow_title": "OPCOM Romania",
-
     "step": {
       "user": {
         "title": "Configure OPCOM Romania",
@@ -21,7 +19,6 @@
         }
       }
     },
-
     "error": {
       "invalid_lang": "Invalid language. Use ro or en.",
       "invalid_resolutions": "Invalid resolutions. Allowed: 15, 30, 60.",
@@ -29,15 +26,12 @@
       "out_of_range": "Value is out of the allowed range.",
       "threshold_low_gte_high": "The low threshold must be less than the high threshold."
     },
-
     "abort": {
       "already_configured": "OPCOM Romania is already configured."
     }
   },
-
   "options": {
     "flow_title": "OPCOM Romania Settings",
-
     "step": {
       "init": {
         "title": "OPCOM Romania Settings",
@@ -47,7 +41,6 @@
           "licenta": "License"
         }
       },
-
       "settings": {
         "title": "Integration Settings",
         "description": "Update OPCOM Romania integration settings. Optional fields can be cleared to disable them.",
@@ -63,7 +56,6 @@
           "price_threshold_high": "Alert when price rises above this value (RON/MWh). Clear to disable."
         }
       },
-
       "licenta": {
         "title": "OPCOM Romania License",
         "description": "{license_status}\n\nEnter your license key to activate or renew the integration.",
@@ -72,7 +64,6 @@
         }
       }
     },
-
     "error": {
       "invalid_lang": "Invalid language. Use ro or en.",
       "invalid_resolutions": "Invalid resolutions. Allowed: 15, 30, 60.",
@@ -86,6 +77,16 @@
       "license_fingerprint_mismatch": "This license key is bound to a different installation.",
       "license_network_error": "Cannot connect to the license server. Check your internet connection.",
       "license_server_error": "License server error. Please try again later."
+    }
+  },
+  "issues": {
+    "trial_expired": {
+      "title": "Trial expired — OPCOM România",
+      "description": "The free trial period has ended.\n\nSensors are disabled until a license is obtained.\n\n[Get a license now]({learn_more_url})"
+    },
+    "license_expired": {
+      "title": "License expired — OPCOM România",
+      "description": "The license for this integration has expired.\n\nSensors are disabled until the license is renewed.\n\n[Renew license]({learn_more_url})"
     }
   }
 }

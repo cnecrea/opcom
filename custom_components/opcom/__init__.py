@@ -13,10 +13,12 @@ from datetime import timedelta
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
+from homeassistant.components import persistent_notification
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import issue_registry as ir
 
-from .const import DOMAIN, LICENSE_DATA_KEY
+from .const import DOMAIN, LICENSE_DATA_KEY, LICENSE_PURCHASE_URL
 from .coordinator import OpcomCoordinator
 from .license import LicenseManager, LICENSE_API_URL, INTEGRATION
 
@@ -30,6 +32,59 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 async def async_setup(hass: HomeAssistant, config: dict):
     """Configurează integrarea globală OPCOM România."""
     return True
+
+
+
+def _update_license_notifications(hass: HomeAssistant, mgr: LicenseManager) -> None:
+    """Creează sau șterge notificările de expirare licență/trial."""
+    if mgr.is_valid:
+        ir.async_delete_issue(hass, DOMAIN, "trial_expired")
+        ir.async_delete_issue(hass, DOMAIN, "license_expired")
+        persistent_notification.async_dismiss(hass, "opcom_license_expired")
+        return
+
+    has_token = bool(mgr._data.get("activation_token"))
+
+    if has_token:
+        issue_id = "license_expired"
+        notif_title = "OPCOM România — Licența a expirat"
+        notif_message = (
+            "Licența pentru integrarea **OPCOM România** a expirat.\n\n"
+            "Senzorii sunt dezactivați până la reînnoirea licenței.\n\n"
+            f"[Reînnoiește licența]({LICENSE_PURCHASE_URL})"
+        )
+    else:
+        issue_id = "trial_expired"
+        notif_title = "OPCOM România — Licența de probă a expirat"
+        notif_message = (
+            "Perioada de evaluare gratuită pentru integrarea **OPCOM România** s-a încheiat.\n\n"
+            "Senzorii sunt dezactivați până la obținerea unei licențe.\n\n"
+            f"[Obține o licență acum]({LICENSE_PURCHASE_URL})"
+        )
+
+    other_id = "license_expired" if issue_id == "trial_expired" else "trial_expired"
+    ir.async_delete_issue(hass, DOMAIN, other_id)
+
+    ir.async_create_issue(
+        hass,
+        DOMAIN,
+        issue_id,
+        is_fixable=False,
+        is_persistent=True,
+        learn_more_url=LICENSE_PURCHASE_URL,
+        severity=ir.IssueSeverity.WARNING,
+        translation_key=issue_id,
+        translation_placeholders={"learn_more_url": LICENSE_PURCHASE_URL},
+    )
+
+    persistent_notification.async_create(
+        hass,
+        notif_message,
+        title=notif_title,
+        notification_id="opcom_license_expired",
+    )
+
+    _LOGGER.debug("[OPCOM] Notificare expirare creată: %s", issue_id)
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -106,11 +161,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                     _LOGGER.warning(
                         "[OPCOM] Licența a devenit invalidă — reîncarc senzorii"
                     )
+                    _update_license_notifications(hass, mgr)
                     await mgr._async_reload_entries()
                 elif not was_valid and now_valid:
                     _LOGGER.info(
                         "[OPCOM] Licența a redevenit validă — reîncarc senzorii"
                     )
+                    _update_license_notifications(hass, mgr)
                     await mgr._async_reload_entries()
 
                 # Reprogramează heartbeat-ul la intervalul actualizat de server
@@ -185,6 +242,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                         _LOGGER.warning(
                             "[OPCOM] Licența a devenit invalidă — reîncarc"
                         )
+                    _update_license_notifications(hass, mgr_now)
                     await mgr_now._async_reload_entries()
 
                 # Programează următorul check (dacă serverul a dat valid_until nou)
@@ -222,6 +280,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 "[OPCOM] Licență activă — tip: %s",
                 license_mgr.license_type,
             )
+
+        # ── Verificare inițială notificări expirare licență/trial ──
+        _update_license_notifications(hass, license_mgr)
     else:
         _LOGGER.debug(
             "[OPCOM] LicenseManager există deja (entry suplimentară)"
