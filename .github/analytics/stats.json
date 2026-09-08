@@ -1,7 +1,7 @@
 {
   "repo": "",
   "prima_colectare": "",
-  "ultima_actualizare": "2026-09-07T11:49:15Z",
+  "ultima_actualizare": "2026-09-08T10:46:16Z",
   "zilnic": {
     "2026-03-01": {
       "clones_total": 5,
@@ -5532,7 +5532,11 @@
           "vizite": 1,
           "vizitatori_unici": 1
         }
-      ]
+      ],
+      "clones_total": 10,
+      "clones_unice": 6,
+      "views_total": 18,
+      "views_unice": 6
     },
     "2026-09-07": {
       "stars": 5,
@@ -5565,11 +5569,53 @@
           "vizite": 1,
           "vizitatori_unici": 1
         }
+      ],
+      "clones_total": 16,
+      "clones_unice": 8,
+      "views_total": 4,
+      "views_unice": 4
+    },
+    "2026-09-08": {
+      "stars": 5,
+      "forks": 2,
+      "watchers": 0,
+      "open_issues": 2,
+      "referrers": [
+        {
+          "sursa": "github.com",
+          "vizite": 53,
+          "vizitatori_unici": 19
+        },
+        {
+          "sursa": "Google",
+          "vizite": 33,
+          "vizitatori_unici": 13
+        },
+        {
+          "sursa": "hubinteligent.org",
+          "vizite": 8,
+          "vizitatori_unici": 4
+        },
+        {
+          "sursa": "chatgpt.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "copilot.microsoft.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        },
+        {
+          "sursa": "l.facebook.com",
+          "vizite": 1,
+          "vizitatori_unici": 1
+        }
       ]
     }
   },
   "releases": {
-    "2.2.3": 8,
+    "2.2.3": 9,
     "2.2.2": 1,
     "2.2.1": 1,
     "2.2.0": 1,
