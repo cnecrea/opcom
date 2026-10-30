@@ -13,7 +13,7 @@ from homeassistant.helpers import entity_registry as er
 import datetime as dt
 
 from .const import DOMAIN, LICENSE_DATA_KEY
-from .coordinator import OpcomCoordinator
+from .coordinator import OpcomCoordinator, stare_blocare
 from .helpers import max_intervals_per_day
 
 
@@ -158,6 +158,21 @@ async def async_get_config_entry_diagnostics(
         }
     else:
         coordinator_section["Stare"] = "coordinator indisponibil"
+
+    # Refuzul serverului (403 / 429): pauza de cereri și cine a răspuns
+    blocare = stare_blocare(hass)
+    coordinator_section["Refuz server OPCOM"] = (
+        {
+            "HTTP": blocare["status"],
+            "Refuzuri consecutive": blocare["episoade"],
+            "Cereri suspendate pana la": (
+                blocare["pana_la"].isoformat() if blocare["pana_la"] else "—"
+            ),
+            "Raspuns server": blocare["detail"],
+        }
+        if blocare["episoade"]
+        else "nu"
+    )
 
     # --- 3. Rezumat date per zi ---
     data_summary: list[dict[str, Any]] = []
