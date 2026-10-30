@@ -33,6 +33,7 @@ from .const import (
     DEFAULT_TOP_N_WINDOWS,
     DEFAULT_PRICE_THRESHOLD_LOW,
     DEFAULT_PRICE_THRESHOLD_HIGH,
+    OPCOM_CSV_URL,
     OPCOM_TIMEZONE,
     OpcomSettings,
 )
@@ -44,6 +45,19 @@ _LOGGER = logging.getLogger(__name__)
 # 12:00 CET, publicare în jur de 13:00). Înainte de ora asta nu are rost să cerem
 # ziua de mâine — OPCOM răspunde cu un fișier gol.
 _ORA_PUBLICARE_MAINE_CET = 12
+
+# Când serverul OPCOM refuză clientul (403 / 429 — de obicei IP-ul rețelei blocat de WAF), nu mai trimitem
+# cereri o vreme: 30 min după primul refuz, apoi 60 min. Fără pauză, reîncercările de pornire ale Home
+# Assistant (la cel mult 80 s, la nesfârșit) loveau WAF-ul de mii de ori pe zi și puteau prelungi blocarea.
+_PAUZE_BLOCARE = (timedelta(minutes=30), timedelta(minutes=60))
+_BLOCARE_KEY = f"{DOMAIN}_blocare"
+
+
+def stare_blocare(hass: HomeAssistant) -> dict[str, Any]:
+    """Starea refuzului, comună domeniului: supraviețuiește reîncercărilor de pornire (alt coordinator)."""
+    return hass.data.setdefault(
+        _BLOCARE_KEY, {"pana_la": None, "episoade": 0, "status": None, "detail": None}
+    )
 
 
 def _rezolutie_completa(res_obj: Any) -> bool:
@@ -314,6 +328,13 @@ class OpcomCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         erori: list[str] = []
         schimbat = False
         descarcate: list[str] = []
+        blocare = stare_blocare(self.hass)
+        blocat = blocare["pana_la"] is not None and dt_util.utcnow() < blocare["pana_la"]
+        if blocat:
+            _LOGGER.debug(
+                "OPCOM: cereri suspendate până la %s (serverul a refuzat cu HTTP %s).",
+                dt_util.as_local(blocare["pana_la"]).strftime("%H:%M"), blocare["status"],
+            )
 
         for offset, (day, cheie) in enumerate(zip(zile, chei)):
             lipsa = self._rezolutii_lipsa(cheie)
@@ -321,11 +342,22 @@ class OpcomCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 continue
             if offset > 0 and now_cet.hour < _ORA_PUBLICARE_MAINE_CET:
                 continue  # rezultatele pentru mâine nu sunt încă publicate
+            if blocat:
+                continue  # serverul ne refuză: nu trimitem nicio cerere până la sfârșitul pauzei
             try:
                 day_obj = await fetch_and_parse_day(self._session, day, self.settings, lipsa)
             except OpcomFetchError as err:
                 erori.append(f"{cheie}: {err}")
+                if err.blocked:
+                    self._inregistreaza_blocare(err, day)
+                    blocat = True  # nici zilele următoare nu le mai cerem
                 continue
+            if blocare["episoade"]:
+                _LOGGER.info(
+                    "OPCOM: serverul opcom.ro acceptă din nou cererile (după %d %s).",
+                    blocare["episoade"], "refuz" if blocare["episoade"] == 1 else "refuzuri",
+                )
+                blocare.update(pana_la=None, episoade=0, status=None, detail=None)
             if self._integreaza_zi(cheie, day_obj):
                 schimbat = True
                 descarcate.append(cheie)
@@ -334,7 +366,16 @@ class OpcomCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                     cheie, self._extract_day_debug(self._zile[cheie]),
                 )
 
-        if erori:
+        if blocat and not self._zile:
+            # Fără date în cache: actualizarea eșuează, dar fără nicio cerere (și fără ERROR repetat —
+            # refuzul a fost raportat o dată, cu detalii, în _inregistreaza_blocare)
+            raise UpdateFailed(
+                f"opcom.ro refuză temporar cererile (HTTP {blocare['status']}) — reîncerc după "
+                f"{dt_util.as_local(blocare['pana_la']).strftime('%H:%M')}"
+            )
+        if blocat:
+            pass  # refuzul e deja raportat (o dată, cu detalii); datele descărcate anterior rămân
+        elif erori:
             if not self._zile:
                 if not self._indisponibil_raportat:
                     _LOGGER.error("OPCOM: nu am putut descărca prețurile: %s", "; ".join(erori))
@@ -375,6 +416,32 @@ class OpcomCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "top_n_per_res": self.settings.top_n_per_res,
             },
         }
+
+    def _inregistreaza_blocare(self, err: OpcomFetchError, day: dt.date) -> None:
+        """Serverul refuză clientul (403 / 429): pauză de cereri și un mesaj clar, o dată pe episod."""
+        blocare = stare_blocare(self.hass)
+        pauza = _PAUZE_BLOCARE[min(blocare["episoade"], len(_PAUZE_BLOCARE) - 1)]
+        blocare["episoade"] += 1
+        blocare.update(pana_la=dt_util.utcnow() + pauza, status=err.status, detail=err.detail)
+        ora = dt_util.as_local(blocare["pana_la"]).strftime("%H:%M")
+        minute = int(pauza.total_seconds() // 60)
+        if blocare["episoade"] == 1:
+            url = OPCOM_CSV_URL.format(
+                dd=day.day, mm=day.month, yyyy=day.year, lang=self.settings.lang, res=self.settings.resolutions[0]
+            )
+            _LOGGER.warning(
+                "OPCOM: serverul opcom.ro refuză cererile acestui Home Assistant (HTTP %s; %s). De obicei "
+                "înseamnă că adresa IP a rețelei e blocată temporar de firewall-ul OPCOM — integrarea nu poate "
+                "ocoli asta. Nu mai trimit cereri până la %s (pauză %d min). Ca să verifici, deschide în "
+                "browser, din aceeași rețea: %s",
+                err.status, err.detail or "fără detalii", ora, minute, url,
+            )
+        else:
+            _LOGGER.info(
+                "OPCOM: opcom.ro refuză în continuare cererile (HTTP %s, refuzul nr. %d) — următoarea "
+                "încercare la %s (pauză %d min).",
+                err.status, blocare["episoade"], ora, minute,
+            )
 
     # ------------------------------------------------------------------
     # Timer de graniță — UN SINGUR timer la cea mai fină rezoluție
