@@ -20,12 +20,44 @@ _USER_AGENT = "HomeAssistant-OPCOM/2.3 (+https://github.com/cnecrea/opcom)"
 _TIMEOUT = ClientTimeout(total=30)
 
 
-class OpcomFetchError(RuntimeError):
-    """Descărcarea unui CSV OPCOM a eșuat (`status` = codul HTTP, None la erori de rețea)."""
+# Răspunsuri prin care serverul OPCOM (WAF-ul din fața lui) refuză clientul: celelalte rezoluții / zile
+# ar fi refuzate la fel, iar cererile repetate pot prelungi blocarea.
+BLOCKED_STATUSES = (403, 429)
 
-    def __init__(self, message: str, status: int | None = None) -> None:
+
+class OpcomFetchError(RuntimeError):
+    """Descărcarea unui CSV OPCOM a eșuat (`status` = codul HTTP, None la erori de rețea).
+
+    `detail`: cine a răspuns la o eroare HTTP (header Server, titlul / începutul paginii, numele
+    cookie-urilor) — pentru diagnostic, ex. „Server: BarracudaHTTP; pagină: „Request Rejected"".
+    """
+
+    def __init__(self, message: str, status: int | None = None, detail: str | None = None) -> None:
         super().__init__(message)
         self.status = status
+        self.detail = detail
+
+    @property
+    def blocked(self) -> bool:
+        return self.status in BLOCKED_STATUSES
+
+
+def _response_detail(resp: Any, body: str) -> str:
+    """Rezumatul unui răspuns de eroare: cine a răspuns și ce scrie pe pagină (fără valorile cookie-urilor)."""
+    parts: list[str] = []
+    server = resp.headers.get("Server")
+    if server:
+        parts.append(f"Server: {server}")
+    title = re.search(r"<title[^>]*>(.*?)</title>", body or "", re.S | re.I)
+    text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", re.sub(r"<(script|style|title)\b.*?</\1>", " ", body or "", flags=re.S | re.I))).strip()
+    if title and title.group(1).strip():
+        parts.append(f"pagină: „{title.group(1).strip()[:80]}”")
+    if text:
+        parts.append(f"text: „{text[:160]}”")
+    cookies = sorted(resp.cookies.keys()) if getattr(resp, "cookies", None) else []
+    if cookies:
+        parts.append(f"cookie-uri: {', '.join(cookies)}")
+    return "; ".join(parts) or "răspuns fără detalii"
 
 
 def create_opcom_session(hass: HomeAssistant) -> ClientSession:
@@ -152,7 +184,15 @@ async def fetch_csv(session: ClientSession, day: dt.date, resolution: int, lang:
 
     try:
         async with session.get(url, headers=headers, timeout=_TIMEOUT) as resp:
-            resp.raise_for_status()
+            if resp.status >= 400:
+                body = await resp.text(errors="replace")
+                detail = _response_detail(resp, body)
+                raise OpcomFetchError(
+                    f"Nu pot descărca CSV de la OPCOM (rezoluție={resolution}, dată={iso_date(day)}, lang={lang}): "
+                    f"HTTP {resp.status} {resp.reason or ''}".rstrip() + f", url='{url}' — {detail}",
+                    resp.status,
+                    detail,
+                )
             text = await resp.text()
 
             # Mic sanity-check ca să prinzi rapid “am primit altceva decât CSV”
@@ -461,6 +501,9 @@ async def fetch_and_parse_day(
                 "OPCOM: fetch CSV eșuat (data=%s, res=%s): %s",
                 iso_date(day), res, err,
             )
+            if err.blocked:
+                # Serverul refuză clientul: celelalte rezoluții ar fi refuzate la fel → nu le mai cerem
+                raise
             failed_resolutions.append(res)
             continue
 
@@ -488,6 +531,7 @@ async def fetch_and_parse_day(
         raise OpcomFetchError(
             f"Toate rezoluțiile ({resolutions}) au eșuat pentru ziua {iso_date(day)}.",
             last_fetch_error.status if last_fetch_error else None,
+            last_fetch_error.detail if last_fetch_error else None,
         )
 
     if failed_resolutions:
