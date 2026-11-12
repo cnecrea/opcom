@@ -578,10 +578,10 @@ class LicentaNecesaraSensor(SensorEntity):
         if mgr is not None:
             status = mgr.status
             if status == "expired":
-                return "Licență expirată"
+                return "Licență expirată" if mgr.has_license else "Perioadă de test încheiată"
             if status == "trial":
                 days = mgr.trial_days_remaining
-                return f"Trial — {days} zile rămase" if days > 0 else "Trial expirat"
+                return "Perioadă de test: " + ("o zi rămasă" if days == 1 else f"{days} {'de ' if days >= 20 else ''}zile rămase") if days > 0 else "Perioadă de test încheiată"
         return "Licență necesară"
 
     @property
